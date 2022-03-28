@@ -1,5 +1,4 @@
 export interface IJogador {
-  readonly id?: string;
   readonly telefoneCelular: string;
   readonly email: string;
   nome: string;

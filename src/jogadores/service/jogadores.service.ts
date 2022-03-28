@@ -1,19 +1,16 @@
-import { query } from 'express';
 import { IJogador } from './../interfaces/jogador.interface';
 import { CriarJogadorDto } from '../dtos/criar-jogador.dto';
-import {
-  Injectable,
-  Logger,
-  Controller,
-  NotFoundException,
-} from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class JogadoresService {
   private jogadores: IJogador[] = [];
   private readonly logger = new Logger(JogadoresService.name);
-  constructor() {}
+  constructor(
+    @InjectModel('Jogador') private readonly jogadorModel: Model<IJogador>,
+  ) {}
 
   async criarAtualizaJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { email } = criarJogadorDto;
@@ -32,7 +29,6 @@ export class JogadoresService {
   private criarJogador(criarJogadorDto: CriarJogadorDto): void {
     const { nome, telefoneCelular, email } = criarJogadorDto;
     const jogador: IJogador = {
-      id: randomUUID(),
       nome,
       telefoneCelular,
       email,

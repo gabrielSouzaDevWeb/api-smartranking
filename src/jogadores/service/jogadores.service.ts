@@ -1,3 +1,4 @@
+import { query } from 'express';
 import { IJogador } from './../interfaces/jogador.interface';
 import { CriarJogadorDto } from '../dtos/criar-jogador.dto';
 import {
@@ -44,11 +45,11 @@ export class JogadoresService {
   }
 
   async atualizarJogador(
-    jogadorEcontrado: CriarJogadorDto,
+    jogadorEncontrado: CriarJogadorDto,
     novoJogadorDto: CriarJogadorDto,
   ): Promise<void> {
     const { nome } = novoJogadorDto;
-    jogadorEcontrado.nome = nome;
+    jogadorEncontrado.nome = nome;
   }
 
   async consultarJogadorPeloEmail(email: string): Promise<IJogador> {
@@ -60,5 +61,21 @@ export class JogadoresService {
       throw new NotFoundException(`Jogador com e-mail ${email} não encontrado`);
     }
     return jogadorEncontrado;
+  }
+
+  async deletarJogador(query: string): Promise<void> {
+    console.log(4, query);
+    console.log(5, this.jogadores);
+    console.log(6, this.jogadores[this.jogadores.length - 1].email);
+
+    const jogadorEncontrado = await this.jogadores.find(
+      (jogador) => jogador.email === query,
+    );
+    console.log(7, jogadorEncontrado);
+
+    this.jogadores = this.jogadores.filter((jogador) => {
+      return jogador.email !== jogadorEncontrado.email;
+    });
+    console.log(this.jogadores);
   }
 }

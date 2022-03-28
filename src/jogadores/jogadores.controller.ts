@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { IJogador } from './interfaces/jogador.interface';
+import { query } from 'express';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
@@ -23,12 +24,21 @@ export class JogadoresController {
   async consultarJogadores(
     @Query('email') email: string,
     @Query('nome') nome: string,
+    @Query('telefoneCelular') telefoneCelular: string,
   ): Promise<IJogador | IJogador[]> {
-    if (email) {
-      return await this.jogadoresService.consultarJogadorPeloEmail(email);
+    let i = email || nome || telefoneCelular;
+    if (i) {
+      return await this.jogadoresService.consultarJogadorPeloEmail(i);
     } else {
       return await this.jogadoresService.consultarTodosJogadores();
     }
+  }
+
+  @Delete()
+  async deleteJogador(@Query('email') email: string): Promise<void> {
+    console.log(1, email);
+
+    this.jogadoresService.deletarJogador(email);
   }
 
   // @Put()

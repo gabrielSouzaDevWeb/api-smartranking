@@ -18,7 +18,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "git-reset:s": "git reset --hard",
+    "git-reset:u": "git clean -fd",
+    "git-reset:su": "git reset --hard & git clean -fd"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

@@ -23,12 +23,9 @@ export class JogadoresController {
   @Get()
   async consultarJogadores(
     @Query('email') email: string,
-    @Query('nome') nome: string,
-    @Query('telefoneCelular') telefoneCelular: string,
   ): Promise<IJogador | IJogador[]> {
-    let i = email || nome || telefoneCelular;
-    if (i) {
-      return await this.jogadoresService.consultarJogadorPeloEmail(i);
+    if (email) {
+      return await this.jogadoresService.consultarJogadorPeloEmail(email);
     } else {
       return await this.jogadoresService.consultarTodosJogadores();
     }
@@ -36,8 +33,6 @@ export class JogadoresController {
 
   @Delete()
   async deleteJogador(@Query('email') email: string): Promise<void> {
-    console.log(1, email);
-
     this.jogadoresService.deletarJogador(email);
   }
 

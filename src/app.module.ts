@@ -7,12 +7,9 @@ import { JogadoresModule } from './jogadores/jogadores.module';
       'mongodb+srv://gabriel:gabriel@cluster0.4rqbp.mongodb.net/smartranking?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
-        useCreateIndex: true,
         useUnifiedTopology: true,
-        useFindAndModify: false,
       },
     ),
-    ,
     JogadoresModule,
   ],
   exports: [],

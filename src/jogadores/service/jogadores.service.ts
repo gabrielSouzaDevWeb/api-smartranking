@@ -1,13 +1,6 @@
-import { query } from 'express';
 import { IJogador } from './../interfaces/jogador.interface';
 import { CriarJogadorDto } from '../dtos/criar-jogador.dto';
-import {
-  Injectable,
-  Logger,
-  Controller,
-  NotFoundException,
-} from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class JogadoresService {
@@ -32,7 +25,6 @@ export class JogadoresService {
   private criarJogador(criarJogadorDto: CriarJogadorDto): void {
     const { nome, telefoneCelular, email } = criarJogadorDto;
     const jogador: IJogador = {
-      id: randomUUID(),
       nome,
       telefoneCelular,
       email,

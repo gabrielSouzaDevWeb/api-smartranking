@@ -26,11 +26,14 @@ export class JogadoresService {
   private async criarJogador(
     criarJogadorDto: CriarJogadorDto,
   ): Promise<IJogador> {
+    console.log('jogador criado:', criarJogadorDto);
+
     const jogadorCriado = new this.jogadorModel(criarJogadorDto);
     return await jogadorCriado.save();
   }
 
   async atualizarJogador(novoJogadorDto: CriarJogadorDto): Promise<IJogador> {
+    console.log('jogador atualizado:', novoJogadorDto);
     return await this.jogadorModel
       .findOneAndUpdate(
         { email: novoJogadorDto.email },
@@ -47,7 +50,7 @@ export class JogadoresService {
     return jogadorEncontrado;
   }
 
-  async deletarJogador(email: string): Promise<void> {
-    return await this.jogadorModel.remove({ email }).exec();
+  async deletarJogador(email: string): Promise<any> {
+    return await this.jogadorModel.deleteOne({ email }).exec();
   }
 }

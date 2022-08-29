@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JogadoresModule } from './jogadores/jogadores.module';
 
 @Module({
   imports: [
     JogadoresModule,
-    MongooseModule.forRoot(
-      'mongodb+srv://gabriel_souza:1WMlXbRjmoO2D1I7@cluster0.xbyrd2u.mongodb.net/test',
-    ),
+    ConfigModule.forRoot({
+      envFilePath: '.development.env',
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_CONECTION),
   ],
   controllers: [],
   providers: [],

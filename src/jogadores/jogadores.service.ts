@@ -1,5 +1,10 @@
 import { IJogador } from './interfaces/jogador.interface';
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,34 +24,44 @@ export class JogadoresService {
       .exec();
 
     if (jogadorEncontrado) {
-      // return await this.atualizar(criarJogadorDto);
+      throw new BadRequestException(
+        `jogador com e-mail '${email}' já cadastrado`,
+      );
     }
-    this.criar(criarJogadorDto);
-    return;
+
+    return await this.criarJogador(criarJogadorDto);
   }
 
   public async getAll(): Promise<IJogador[]> {
     return await this.jogadorModel.find().exec();
   }
 
-  private async criar(criarJogadorDto: CriarJogadorDto): Promise<IJogador> {
+  private async criarJogador(
+    criarJogadorDto: CriarJogadorDto,
+  ): Promise<IJogador> {
     const jogadorCriado = new this.jogadorModel(criarJogadorDto);
-    return jogadorCriado.save();
+    return await jogadorCriado.save();
   }
 
   public async atualizarJogador(
     criarJogadorDto: CriarJogadorDto,
     _id: string,
   ): Promise<any> {
-    return await this.jogadorModel
-      .updateOne({ _id }, { $set: criarJogadorDto })
-      .exec();
+    await this.getJogadorPorId(_id)
+      .then(async (data) => {
+        return await this.jogadorModel
+          .updateOne({ _id }, { $set: criarJogadorDto })
+          .exec();
+      })
+      .catch((err) => {
+        throw new NotFoundException(`Jogador com ${_id} não encontrado`, err);
+      });
   }
 
   async deleteByEmail(email: string): Promise<any> {
-    return this.jogadorModel.deleteOne({ email }).exec();
+    return await this.jogadorModel.deleteOne({ email }).exec();
   }
   async getJogadorPorId(_id: string): Promise<IJogador | string> {
-    return this.jogadorModel.findOne({ _id }).exec();
+    return await this.jogadorModel.findOne({ _id }).exec();
   }
 }

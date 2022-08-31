@@ -1,3 +1,4 @@
+import { AtualizarJogadorDto } from './dtos/atualizar-jogador.dto';
 import { JogadoresService } from './jogadores.service';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import {
@@ -26,7 +27,7 @@ export class JogadoresController {
   async CriarAtualizarJogador(@Body() CriarJogadorDto: CriarJogadorDto) {
     // const { email } = CriarJogadorDto;
     // return JSON.stringify(`{"email":${email}}`);
-    return await this.jogadoresService.criarAtualizarJogador(CriarJogadorDto);
+    return await this.jogadoresService.criarJogador(CriarJogadorDto);
   }
   @Get('get-all')
   async getAll() {
@@ -39,7 +40,7 @@ export class JogadoresController {
     @Res() res,
   ) {
     if (_id) {
-      return this.jogadoresService.getJogadorPorId(_id).then((data) => {
+      return this.jogadoresService.consultarJogadorPeloId(_id).then((data) => {
         return data
           ? res.status(200).send(data)
           : res.status(200).send({
@@ -49,19 +50,18 @@ export class JogadoresController {
       });
     } else {
       res.status(400).send({ message: 'Por favor insira um email' });
-      // throw new Error("'Por favor insira um email'");
     }
   }
 
   @Put('/:_id')
   @UsePipes(ValidationPipe)
   async atualizarJogador(
-    @Body() criarJogadorDto: CriarJogadorDto,
+    @Body() atualizarJogadorDto: AtualizarJogadorDto,
     @Param('_id') _id: string,
     @Res() response,
   ): Promise<void> {
     await this.jogadoresService
-      .atualizarJogador(criarJogadorDto, _id)
+      .atualizarJogador(_id, atualizarJogadorDto)
       .then((data) => {
         response
           .status(HttpStatus.OK)
@@ -74,8 +74,6 @@ export class JogadoresController {
     @Param('_id', JogadoresValidacaoParametrosPipe) _id: string,
     @Res() res,
   ) {
-    console.log(_id);
-
     if (_id) {
       return this.jogadoresService.deleteByEmail(_id).then((data) => {
         return data

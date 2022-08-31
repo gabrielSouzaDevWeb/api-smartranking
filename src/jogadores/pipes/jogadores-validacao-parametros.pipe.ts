@@ -11,9 +11,7 @@ export class JogadoresValidacaoParametrosPipe implements PipeTransform {
         `O valor do parametro ${metadata.data} deve ser informado`,
       );
     }
-    // console.log(
-    //   `value: ${JSON.stringify(value)} metadata: ${JSON.stringify(metadata)}`,
-    // );
+
     return value;
   }
 }

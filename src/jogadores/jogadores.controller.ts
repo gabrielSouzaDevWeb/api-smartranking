@@ -10,7 +10,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Res,
   UsePipes,
   ValidationPipe,
@@ -24,33 +23,52 @@ export class JogadoresController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async CriarAtualizarJogador(@Body() CriarJogadorDto: CriarJogadorDto) {
-    // const { email } = CriarJogadorDto;
-    // return JSON.stringify(`{"email":${email}}`);
-    return await this.jogadoresService.criarJogador(CriarJogadorDto);
+  async CriarAtualizarJogador(
+    @Body() CriarJogadorDto: CriarJogadorDto,
+    @Res() res,
+  ) {
+    return await this.jogadoresService
+      .criarAtualizarJogador(CriarJogadorDto)
+      .then((data) => {
+        res
+          .status(HttpStatus.CREATED)
+          .send({ message: 'jogador criado com sucesso', data });
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
+
   @Get('get-all')
-  async getAll() {
-    return this.jogadoresService.getAll();
+  async getAll(@Res() response) {
+    return this.jogadoresService
+      .getAll()
+      .then((data) => {
+        response
+          .status(HttpStatus.OK)
+          .send({ message: 'Consulta realizada com sucesso', data });
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 
   @Get('by-id/:_id')
   async getJogadorPorEmail(
     @Param('_id', JogadoresValidacaoParametrosPipe) _id: string,
-    @Res() res,
+    @Res() response,
   ) {
-    if (_id) {
-      return this.jogadoresService.consultarJogadorPeloId(_id).then((data) => {
-        return data
-          ? res.status(200).send(data)
-          : res.status(200).send({
-              message: `Não há nenhum jogador com o E-mail: '${_id}'`,
-              data: [],
-            });
+    return this.jogadoresService
+      .getJogadorPorId(_id)
+      .then((data) => {
+        return response.status(200).send({
+          message: `Consulta realizada com sucesso`,
+          data,
+        });
+      })
+      .catch((err) => {
+        throw new Error(err);
       });
-    } else {
-      res.status(400).send({ message: 'Por favor insira um email' });
-    }
   }
 
   @Put('/:_id')
@@ -66,6 +84,9 @@ export class JogadoresController {
         response
           .status(HttpStatus.OK)
           .send({ message: 'Jogador atualizado com sucesso', data });
+      })
+      .catch((err) => {
+        throw new Error(err);
       });
   }
 
@@ -74,20 +95,13 @@ export class JogadoresController {
     @Param('_id', JogadoresValidacaoParametrosPipe) _id: string,
     @Res() res,
   ) {
-    if (_id) {
-      return this.jogadoresService.deleteByEmail(_id).then((data) => {
-        return data
-          ? res.status(200).send(data)
-          : res.status(200).send({
-              message: `Não há nenhum jogador com o E-mail: '${_id}'`,
-              data,
-            });
-      });
-    } else {
-      res.status(400).send({ message: 'Por favor insira um _id' });
-      // throw new Error("'Por favor insira um email'");
-    }
+    return this.jogadoresService.deleteByEmail(_id).then((data) => {
+      return res
+        .status(HttpStatus.OK)
+        .send({ message: 'jogador excluído com sucesso', data: [] })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    });
   }
-
-  // @Put("")
 }

@@ -1,6 +1,11 @@
 import { AtualizarJogadorDto } from './dtos/atualizar-jogador.dto';
 import { IJogador } from './interfaces/jogador.interface';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -38,7 +43,7 @@ export class JogadoresService {
     criarJogadorDto: CriarJogadorDto,
   ): Promise<IJogador> {
     const jogadorCriado = new this.jogadorModel(criarJogadorDto);
-    return jogadorCriado.save();
+    return await jogadorCriado.save();
   }
 
   async deleteByEmail(_id: string): Promise<any> {

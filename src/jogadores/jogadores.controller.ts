@@ -28,7 +28,7 @@ export class JogadoresController {
     @Res() res,
   ) {
     return await this.jogadoresService
-      .criarAtualizarJogador(CriarJogadorDto)
+      .criarJogador(CriarJogadorDto)
       .then((data) => {
         res
           .status(HttpStatus.CREATED)
@@ -59,7 +59,7 @@ export class JogadoresController {
     @Res() response,
   ) {
     return this.jogadoresService
-      .getJogadorPorId(_id)
+      .consultarJogadorPeloId(_id)
       .then((data) => {
         return response.status(200).send({
           message: `Consulta realizada com sucesso`,

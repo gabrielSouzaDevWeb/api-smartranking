@@ -82,14 +82,15 @@ export class CategoriasController {
   }
 
   @Put(`update/:categoria`)
+  @UsePipes(ValidationPipe)
   async alterarJogadorPorId(
     @Res() res,
     @Req() Req,
     @Param('categoria') categoria: string,
     @Body() body: AtualizarCategoriaDto,
-  ) {
-    return this.categoriasService
-      .updateCategoriaById(categoria, body)
+  ): Promise<void> {
+    return await this.categoriasService
+      .updateCategoriaByCategoria(categoria, body)
       .then((data) => {
         res.status(HttpStatus.OK).send({ message: this.message.put, data });
       })
@@ -109,6 +110,29 @@ export class CategoriasController {
       })
       .catch((err) => {
         throw new BadRequestException(err);
+      });
+  }
+
+  @Post('categoria/:categoria/jogador/:idJogador')
+  async AdicionarJogadorACategoria(
+    @Param() params: string[],
+    @Res() res,
+    @Req() req,
+  ) {
+    return this.categoriasService
+      .addJogadorCategoria(params, req)
+      .then((data) => {
+        res.status(HttpStatus.OK).send({
+          message: 'Jogador atribuido a categoria com sucesso',
+          data: [data],
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'Jogador não atribuido', data: [err] });
       });
   }
 }

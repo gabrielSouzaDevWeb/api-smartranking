@@ -93,52 +93,19 @@ export class CategoriasService {
     // const jogador = params['jogador'];
     const { categoria, idJogador } = req.params;
 
-    await this.categoriaModel
+    const categoriaEncontrada = await this.categoriaModel
       .findOne({ categoria })
-      .exec()
-      .then(async (categoriaEncontrada: ICategoria) => {
-        //to-do: verificar se o joagdor está cadastrada
-        if (categoriaEncontrada) {
-          //const jogadorJaCadastradoCategoria =
-          await this.categoriaModel
-            .find({ categoria })
-            .where('jogadores')
-            .in(idJogador)
-            .exec()
-            .then(async (jogadorJaCadastradoCategoria) => {
-              if (
-                jogadorJaCadastradoCategoria &&
-                !(jogadorJaCadastradoCategoria.length > 0)
-              ) {
-                //inverter os blocos com a condição (jogador.length > 0)
-                return await this.categoriaModel
-                  .findOneAndUpdate(
-                    { categoria },
-                    { $set: categoriaEncontrada },
-                  )
-                  .exec()
-                  .catch((err) => {
-                    throw new Error(
-                      `Não foi possível atualizar a categoria '${categoria}' com o jogador de id ${idJogador}`,
-                    );
-                  });
-              }
-              throw new Error(
-                `Jogador '${idJogador}' já cadastrado na categoria '${categoria}'`,
-              );
-            });
-          // .catch((err) => {
-          //   throw new BadRequestException(
-          //     `Jogador ${idJogador} não encontrado`,
-          //   );
-          // });
-        }
-      })
-      .catch((err) => {
-        // throw new BadRequestException(
-        //   `Categoria '${categoria}' não encontrada`,
-        // );
-      });
+      .exec();
+    const jogadorJaCadastrado = await this.categoriaModel.find();
+    await this.jogadoresService.consultarJogadorPeloId(idJogador);
+    if (!categoriaEncontrada) {
+      throw new BadRequestException(`Categoria ${categoria} não cadastrada!`);
+    }
+
+    categoriaEncontrada.jogadores.push(idJogador);
+    await this.categoriaModel
+      .findOneAndUpdate({ categoria }, { $set: categoriaEncontrada })
+      .exec();
   }
 }
 

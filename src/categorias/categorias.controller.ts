@@ -129,7 +129,6 @@ export class CategoriasController {
       })
       .catch((err) => {
         console.log(err);
-
         return res
           .status(HttpStatus.BAD_REQUEST)
           .send({ message: 'Jogador não atribuido', data: [err] });

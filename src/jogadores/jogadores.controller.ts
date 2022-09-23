@@ -14,7 +14,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { JogadoresValidacaoParametrosPipe } from './pipes/jogadores-validacao-parametros.pipe';
+import { ValidacaoParametrosPipe } from '../common/pipes/validacao-parametros.pipe';
 import { response } from 'express';
 
 @Controller('api/v1/jogadores')
@@ -55,7 +55,7 @@ export class JogadoresController {
 
   @Get('by-id/:_id')
   async getJogadorPorEmail(
-    @Param('_id', JogadoresValidacaoParametrosPipe) _id: string,
+    @Param('_id', ValidacaoParametrosPipe) _id: string,
     @Res() response,
   ) {
     return this.jogadoresService
@@ -92,7 +92,7 @@ export class JogadoresController {
 
   @Delete(':_id')
   async deleteByEmail(
-    @Param('_id', JogadoresValidacaoParametrosPipe) _id: string,
+    @Param('_id', ValidacaoParametrosPipe) _id: string,
     @Res() res,
   ) {
     return this.jogadoresService.deleteByEmail(_id).then((data) => {

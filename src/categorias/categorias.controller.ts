@@ -17,6 +17,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ICategoria } from './interfaces/categoria.interface';
+import { throwError } from 'rxjs';
 
 @Controller('api/v1/categorias')
 export class CategoriasController {
@@ -109,7 +110,7 @@ export class CategoriasController {
           .send({ message: this.message.delete, data });
       })
       .catch((err) => {
-        throw new BadRequestException(err);
+        throw new Error(err);
       });
   }
 
@@ -119,6 +120,8 @@ export class CategoriasController {
     @Res() res,
     @Req() req,
   ) {
+    // return console.log(1);
+
     return this.categoriasService
       .addJogadorCategoria(params, req)
       .then((data) => {
@@ -128,10 +131,7 @@ export class CategoriasController {
         });
       })
       .catch((err) => {
-        console.log(err);
-        return res
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'Jogador não atribuido', data: [err] });
+        throw new BadRequestException(`${err}`);
       });
   }
 }

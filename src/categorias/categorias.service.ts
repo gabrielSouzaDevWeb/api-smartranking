@@ -9,8 +9,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 
 @Injectable()
 export class CategoriasService {
@@ -50,21 +48,45 @@ export class CategoriasService {
     return queryResult;
   }
 
-  public async updateCategoriaByCategoria(
+  async updateCategoriaByName(
     categoria: string,
     body: AtualizarCategoriaDto,
   ): Promise<ICategoria | any> {
-    const categoriaByID: ICategoria = await this.categoriaModel
-      .findById(categoria)
+    categoria = categoria.toUpperCase();
+    const categoriaByName: ICategoria[] = await this.categoriaModel
+      .where({
+        categoria: categoria,
+      })
       .exec();
+    console.log(62, 'categoriaByName', categoriaByName);
 
-    if (!categoriaByID) {
+    if (categoriaByName.length === 0) {
       throw new NotAcceptableException(
-        `A categoria '${categoriaByID.categoria}' ainda não foi criada.`,
+        `A categoria '${categoria}' ainda não foi criada.`,
       );
     }
     return await this.categoriaModel
       .findOneAndUpdate({ categoria }, { $set: body })
+      .exec();
+  }
+
+  public async updateCategoriaById(
+    _id: string,
+    body: AtualizarCategoriaDto,
+  ): Promise<ICategoria | any> {
+    console.log(_id);
+
+    const categoriaByID: ICategoria = await this.categoriaModel
+      .findById(_id)
+      .exec();
+
+    if (!categoriaByID) {
+      throw new NotAcceptableException(
+        `A categoria de id '${categoriaByID.categoria}' ainda não foi criada.`,
+      );
+    }
+    return await this.categoriaModel
+      .findOneAndUpdate({ _id }, { $set: body })
       .exec();
   }
 

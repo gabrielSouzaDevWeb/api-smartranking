@@ -82,16 +82,16 @@ export class CategoriasController {
       });
   }
 
-  @Put(`update/:categoria`)
+  @Put(`update/by-id/:_id`)
   @UsePipes(ValidationPipe)
   async alterarJogadorPorId(
     @Res() res,
     @Req() Req,
-    @Param('categoria') categoria: string,
+    @Param('_id') _id: string,
     @Body() body: AtualizarCategoriaDto,
   ): Promise<void> {
     return await this.categoriasService
-      .updateCategoriaByCategoria(categoria, body)
+      .updateCategoriaById(_id, body)
       .then((data) => {
         res.status(HttpStatus.OK).send({ message: this.message.put, data });
       })
@@ -100,6 +100,25 @@ export class CategoriasController {
       });
   }
 
+  @Put(`update/by-name/:categoria`)
+  // @UsePipes(ValidationPipe)
+  async alterarCategoriaPorNome(
+    @Res() res,
+    @Req() req,
+    @Param('categoria') categoria: string,
+    @Body() body: AtualizarCategoriaDto,
+  ): Promise<void> {
+    console.log('touch: alterarCategoriaPorNome');
+
+    return await this.categoriasService
+      .updateCategoriaByName(categoria, body)
+      .then((data) => {
+        res.status(HttpStatus.OK).send({ message: this.message.put, data });
+      })
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
+  }
   @Delete('delete/:_id')
   async removerCategoriaPorId(@Res() res, @Param('_id') _id: string) {
     return this.categoriasService

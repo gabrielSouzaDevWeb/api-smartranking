@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const logger = new Logger('PORT');
-  const PORT = 3456;
+  const logger = new Logger('Main');
+  const PORT = 3000;
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.listen(PORT);

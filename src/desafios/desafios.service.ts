@@ -8,6 +8,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StatusDesafio } from './enums/status-desafio.enum';
+import { Moment } from 'moment';
 
 @Injectable()
 export class DesafiosService {
@@ -19,6 +20,8 @@ export class DesafiosService {
   ) {}
   async criarDesafio(body: CriarDesafioDto, req): Promise<void | any> {
     let { solicitante, jogadores } = body;
+    console.log(body);
+
     const jogadoresEncontrados: Array<IJogador> = [];
 
     let jogadoresId = jogadores.map((jogador: IJogador) => {
@@ -75,5 +78,27 @@ export class DesafiosService {
       return await new this.desafioModel(prepareBodyToSave).save();
     }
     throw new BadRequestException(`Desafio já criado!`);
+  }
+
+  public getDesafios(jogadorid): Promise<IDesafio | Array<IDesafio>> {
+    if (jogadorid) {
+      return this.getDesafiosByJogadorId(jogadorid);
+    }
+    return this.getAllDesafios();
+  }
+
+  private async getDesafiosByJogadorId(jogadorId): Promise<IDesafio> {
+    let desafio: IDesafio = await this.desafioModel
+      .findOne({ solicitante: jogadorId })
+      .populate(['solicitante', 'jogadores'])
+      .exec();
+    return desafio;
+  }
+
+  private async getAllDesafios(): Promise<IDesafio[]> {
+    return await this.desafioModel
+      .find()
+      .populate(['solicitante', 'jogadores'])
+      .exec();
   }
 }

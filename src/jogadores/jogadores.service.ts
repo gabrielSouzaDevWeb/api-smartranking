@@ -54,7 +54,7 @@ export class JogadoresService {
     return this.jogadorModel.deleteOne({ _id }).exec();
   }
 
-  async consultarJogadorPeloId(_id: string): Promise<IJogador | string> {
+  async consultarJogadorPeloId(_id: string): Promise<IJogador> {
     const jogadorEncontrado = await this.jogadorModel.findOne({ _id }).exec();
     if (!jogadorEncontrado) {
       throw new NotFoundException(`Jogador com id ${_id} não encontrado`);

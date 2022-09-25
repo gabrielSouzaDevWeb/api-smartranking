@@ -58,7 +58,6 @@ export class CategoriasService {
         categoria: categoria,
       })
       .exec();
-    console.log(62, 'categoriaByName', categoriaByName);
 
     if (categoriaByName.length === 0) {
       throw new NotAcceptableException(

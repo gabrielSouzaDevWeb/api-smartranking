@@ -17,7 +17,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ICategoria } from './interfaces/categoria.interface';
-import { throwError } from 'rxjs';
 
 @Controller('api/v1/categorias')
 export class CategoriasController {

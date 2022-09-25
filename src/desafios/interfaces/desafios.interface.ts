@@ -1,21 +1,16 @@
+import { StatusDesafio } from './../enums/status-desafio.enum';
 import { IJogador } from './../../jogadores/interfaces/jogador.interface';
 import { Document } from 'mongoose';
 
-export enum DesafioStatus {
-  'pendente' = 1,
-  'aceito' = 2,
-  'recusado' = 3,
-}
-
-export interface IDesafios extends Document {
+export interface IDesafio extends Document {
   dtDesafio: Date;
-  status: DesafioStatus;
-  dtHoraSolicitacao: Date;
-  dtResposta: Date;
+  status: StatusDesafio;
+  dtSolicitacao: Date;
+  dtResposta?: Date;
   solicitante: IJogador;
   categoria: string;
   jogadores: Array<IJogador>;
-  partida: IPartida;
+  partida?: IPartida;
 }
 
 export interface IPartida extends Document {

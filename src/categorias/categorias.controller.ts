@@ -107,8 +107,6 @@ export class CategoriasController {
     @Param('categoria') categoria: string,
     @Body() body: AtualizarCategoriaDto,
   ): Promise<void> {
-    console.log('touch: alterarCategoriaPorNome');
-
     return await this.categoriasService
       .updateCategoriaByName(categoria, body)
       .then((data) => {
@@ -138,8 +136,6 @@ export class CategoriasController {
     @Res() res,
     @Req() req,
   ) {
-    // return console.log(1);
-
     return this.categoriasService
       .addJogadorCategoria(params, req)
       .then((data) => {

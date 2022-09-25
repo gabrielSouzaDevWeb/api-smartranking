@@ -73,8 +73,6 @@ export class CategoriasService {
     _id: string,
     body: AtualizarCategoriaDto,
   ): Promise<ICategoria | any> {
-    console.log(_id);
-
     const categoriaByID: ICategoria = await this.categoriaModel
       .findById(_id)
       .exec();

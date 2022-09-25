@@ -3,16 +3,17 @@ import { IJogador } from './../jogadores/interfaces/jogador.interface';
 import { CriarDesafioDto } from './dtos/desafio.dto';
 import { CategoriasService } from './../categorias/categorias.service';
 import { JogadoresService } from './../jogadores/jogadores.service';
-import { IDesafios } from './interfaces/desafios.interface';
+import { IDesafio } from './interfaces/desafios.interface';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { StatusDesafio } from './enums/status-desafio.enum';
 
 @Injectable()
 export class DesafiosService {
   constructor(
     @InjectModel('Desafios')
-    private readonly desafioModel: Model<IDesafios>,
+    private readonly desafioModel: Model<IDesafio>,
     private readonly jogadoresService: JogadoresService,
     private readonly categoriaService: CategoriasService,
   ) {}
@@ -49,40 +50,29 @@ export class DesafiosService {
 
     const categorias = await this.categoriaService.getAll();
     let categoriaSolicitante: ICategoria;
-    // console.log(categoriaSolicitante);
     categorias.forEach(
       (categoria: ICategoria, index, categorias: ICategoria[]) => {
-        // if(categoria.jogadores.includes())
         let jogadoresId = categoria.jogadores.map((jogador) => {
-          return jogador._id;
+          return jogador._id.toString();
         });
-        console.log(jogadoresId);
-        console.log(categoria.jogadores);
-
         if (jogadoresId.includes(solicitante._id)) {
-          categoriaSolicitante = categoria;
+          return (categoriaSolicitante = categoria);
         }
-        // categoria.jogadores.forEach(
-        //   (jogador: IJogador, index, jogadores: IJogador[]) => {},
-        // );
       },
     );
-    // console.log('SELECT categoria FROM categorias WHERE jogador = solicitante._id');
-    console.log(68, 'categoriaSolicitante', categoriaSolicitante);
+    const prepareBodyToSave = {
+      ...body,
+      categoria: categoriaSolicitante._id,
+      status: StatusDesafio['PENDENTE'],
+      dtSolicitacao: new Date(),
+    };
 
-    // console.log(50, 'categorais', categorias[0].jogadores);
+    const desafioEncontrado: IDesafio = await this.desafioModel
+      .findOne({ prepareBodyToSave })
 
-    // console.log(48, 'jogadoresEncontrados', jogadoresEncontrados);
-    // console.log(49, 'solicitante', solicitante);
-
-    // const {};
-    return body;
-    const desafioEncontrado: IDesafios = await this.desafioModel
-      .findOne({ body })
       .exec();
     if (!desafioEncontrado) {
-      await new this.desafioModel(body).save();
-      return;
+      return await new this.desafioModel(prepareBodyToSave).save();
     }
     throw new BadRequestException(`Desafio já criado!`);
   }

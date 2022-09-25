@@ -4,7 +4,7 @@ export const DesafioSchema = new mongoose.Schema(
   {
     dtDesafio: { type: Date },
     status: { type: String },
-    dtHoraSolicitacao: Date,
+    dtSolicitacao: Date,
     dtResposta: Date,
     solicitante: { type: mongoose.Schema.Types.ObjectId, ref: 'Jogador' },
     categoria: String,

@@ -1,4 +1,4 @@
-import { IJogador } from './../../jogadores/interfaces/jogador.interface';
+import { IJogador } from '../../jogadores/interfaces/jogador.interface';
 import {
   ArrayMaxSize,
   ArrayMinSize,

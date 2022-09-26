@@ -1,6 +1,7 @@
+import { AlterarDesafioDto } from './dtos/alterar-desafio.dto';
 import { ICategoria } from './../categorias/interfaces/categoria.interface';
 import { IJogador } from './../jogadores/interfaces/jogador.interface';
-import { CriarDesafioDto } from './dtos/desafio.dto';
+import { CriarDesafioDto } from './dtos/criar-desafio.dto';
 import { CategoriasService } from './../categorias/categorias.service';
 import { JogadoresService } from './../jogadores/jogadores.service';
 import { IDesafio } from './interfaces/desafios.interface';
@@ -20,7 +21,6 @@ export class DesafiosService {
   ) {}
   async criarDesafio(body: CriarDesafioDto, req): Promise<void | any> {
     let { solicitante, jogadores } = body;
-    console.log(body);
 
     const jogadoresEncontrados: Array<IJogador> = [];
 
@@ -70,14 +70,8 @@ export class DesafiosService {
       dtSolicitacao: new Date(),
     };
 
-    const desafioEncontrado: IDesafio = await this.desafioModel
-      .findOne({ prepareBodyToSave })
-
-      .exec();
-    if (!desafioEncontrado) {
-      return await new this.desafioModel(prepareBodyToSave).save();
-    }
-    throw new BadRequestException(`Desafio já criado!`);
+    //TO-DO: verificar se a partida já foi criada
+    return await new this.desafioModel(prepareBodyToSave).save();
   }
 
   public getDesafios(jogadorid): Promise<IDesafio | Array<IDesafio>> {
@@ -100,5 +94,31 @@ export class DesafiosService {
       .find()
       .populate(['solicitante', 'jogadores'])
       .exec();
+  }
+
+  public async alterarDesafio(
+    desafioId: string,
+    body: AlterarDesafioDto,
+  ): Promise<any> {
+    const desafioEncontrado = await this.desafioModel.findById(desafioId);
+    if (desafioEncontrado) {
+      // desafioEncontrado.status = body.status;
+      // desafioEncontrado.dtDesafio = body.dtDesafio;
+      return await this.desafioModel.updateOne({ _id: desafioId }, body).exec();
+    }
+    throw new BadRequestException(`Desafio não encontrado`);
+  }
+
+  public async deletarDesafio(desafioId: String): Promise<any> {
+    const desafioEncontrado = await this.desafioModel.findById(desafioId);
+    if (desafioEncontrado) {
+      desafioEncontrado.status = StatusDesafio['CANCELADO'];
+
+      //to-do: se o status já estiver como cancelado, avisar
+      return await this.desafioModel
+        .updateOne({ _id: desafioId }, desafioEncontrado)
+        .exec();
+    }
+    throw new BadRequestException(`Desafio não encontrado`);
   }
 }

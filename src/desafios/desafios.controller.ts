@@ -1,4 +1,5 @@
-import { CriarDesafioDto } from './dtos/desafio.dto';
+import { AlterarDesafioDto } from './dtos/alterar-desafio.dto';
+import { CriarDesafioDto } from './dtos/criar-desafio.dto';
 import { DesafiosService } from './desafios.service';
 import {
   Body,
@@ -11,6 +12,9 @@ import {
   BadRequestException,
   UsePipes,
   ValidationPipe,
+  Put,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { send } from 'process';
 
@@ -37,7 +41,7 @@ export class DesafiosController {
   }
 
   @Get()
-  async getDesafios(@Res() res: any, @Req() req: any) {
+  async pegarDesafios(@Res() res: any, @Req() req: any) {
     const { jogadorId } = req.query;
     return this.service
       .getDesafios(jogadorId)
@@ -45,6 +49,43 @@ export class DesafiosController {
         return res
           .status(HttpStatus.OK)
           .json({ message: 'Consulta realizada com sucesso!', data });
+      })
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
+  }
+
+  @Put(`/:desafioId`)
+  async alterarDesafio(
+    @Res() res: any,
+    @Req() req: any,
+    @Body() body: AlterarDesafioDto,
+  ) {
+    const { desafioId } = req.params;
+    return this.service
+      .alterarDesafio(desafioId, body)
+      .then((data) => {
+        res
+          .status(HttpStatus.OK)
+          .json({ message: 'Desafio editado com sucesso!', data });
+      })
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
+  }
+
+  @Delete(`/:desafioId`)
+  async deletarDesafio(
+    @Res() res: any,
+    @Req() req: any,
+    @Param('desafioId') desafioId: string,
+  ) {
+    return this.service
+      .deletarDesafio(desafioId)
+      .then((data) => {
+        res
+          .status(HttpStatus.OK)
+          .json({ message: 'Desafio deletado com sucesso', data });
       })
       .catch((err) => {
         throw new BadRequestException(err);

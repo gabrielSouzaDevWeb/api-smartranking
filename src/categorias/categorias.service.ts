@@ -110,7 +110,6 @@ export class CategoriasService {
   public async addJogadorCategoria(params: string[], req): Promise<void> {
     // const categoria = params['categoria'];
     // const jogador = params['jogador'];
-    // return console.log(params);
 
     const { categoria, idJogador } = req.params;
 
